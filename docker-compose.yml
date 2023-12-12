@@ -1,0 +1,79 @@
+version: "3"
+
+services:
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --schedule "0 0 3 * * *"
+    environment:
+      - TZ=Europe/Bucharest
+    restart: always
+
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Bucharest
+      - WEBUI_PORT=9595
+    volumes:
+      - /data/container_data/qbitorrent:/config
+      - /data/downloads:/downloads
+      - /data/media/series:/series
+      - /data/media/movies:/movies
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 9595:9595
+    restart: always
+
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Bucharest
+      - JELLYFIN_PublishedServerUrl=192.168.0.53
+    volumes:
+      - /data/container_data/jellyfin:/config
+      - /data/media/movies:/data/movies
+      - /data/media/series:/data/tvshows
+    ports:
+      - 8096:8096
+      - 1900:1900/udp
+      - 7359:7359/udp
+      - 8920:8920
+    network_mode: host
+    restart: always
+
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Bucharest
+    volumes:
+      - /data/container_data/sonarr:/config
+      - /data:/host_data
+    ports:
+      - 8989:8989
+    restart: always
+
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Bucharest
+    volumes:
+      - /data/container_data/radarr:/config
+      - /data:/host_data
+    ports:
+      - 7878:7878
+    restart: always
