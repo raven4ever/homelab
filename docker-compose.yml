@@ -76,6 +76,20 @@ services:
       - 7878:7878
     restart: always
 
+  bazarr:
+    image: lscr.io/linuxserver/bazarr
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Bucharest
+    volumes:
+      - /data/container_data/bazarr:/config
+      - /data/media/movies:/movies
+      - /data/media/series:/tv
+    ports:
+      - 6767:6767
+
   homepage:
     image: ghcr.io/gethomepage/homepage
     container_name: homepage
